@@ -59,9 +59,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     int? result;
     try {
       result = await _callWatcherPlugin.initiateCall(number);
-    } on PlatformException {
-      result = -1;
-    }
+    } catch (e) {
+      print(e);
+    } 
 
     if (!mounted) return;
 
