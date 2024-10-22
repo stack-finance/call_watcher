@@ -1,7 +1,7 @@
 name: call_watcher
-description: "A new Flutter plugin project."
+description: "a flutter plugin to listen to call state changes and maintain a call ledger"
 version: 0.0.1
-homepage:
+homepage: 
 
 environment:
   sdk: ^3.5.3
