@@ -15,6 +15,16 @@ add these permissions to your `ios/Runner/Info.plist` in your app
 </array>
 ```
 
+## Usage on Android
+add these permissions to your `AndroidManifest.xml` in your app
+
+```
+  <uses-permission android:name="android.permission.CALL_PHONE" />
+  <uses-permission android:name="android.permission.READ_CALL_LOG" />
+  <!-- If you want to clear call log (Optional)  -->
+  <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+```
+
 ## TODO: 
-- [ ] Add Android Support
+- [x] Add Android Support
 - [ ] Callback from native to flutter
