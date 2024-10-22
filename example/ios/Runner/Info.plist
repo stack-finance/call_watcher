@@ -49,9 +49,6 @@
 	<array>
 		<string>INStartAudioCallIntent</string>
 	</array>
-	<key>NSContactsUsageDescription</key>
-	<string>This app requires access to your contacts to make calls.</string>
-
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>tel</string>

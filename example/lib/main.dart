@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String _lastCalledNumber = 'Unknown';
   final _callWatcherPlugin = CallWatcher();
   final List<CallLogEntry> _callLogs = [];
@@ -26,6 +26,33 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _getLastCalledNumber();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  // This method will be triggered for lifecycle changes.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("App is in the foreground (resumed)");
+        _getCallLogs();
+        break;
+      case AppLifecycleState.inactive:
+        print("App is inactive (e.g., incoming call or switching apps)");
+        // App is in an inactive state, pause tasks here.
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove the observer when the widget is disposed.
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _initateCall(String number) async {
@@ -147,7 +174,8 @@ class _MyAppState extends State<MyApp> {
                 Expanded(
                   child: ListView.builder(
                     itemCount: _callLogs.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                     itemBuilder: (context, index) {
                       return Row(
                         children: [
@@ -157,20 +185,23 @@ class _MyAppState extends State<MyApp> {
                               children: [
                                 Text('${_callLogs[index].number}'),
                                 const SizedBox(width: 10),
-                                Text('Date: ${_callLogs[index].date?.formatDate}'),
+                                Text(
+                                    'Date: ${_callLogs[index].date?.formatDate}'),
                               ],
                             ),
                           ),
                           Column(
                             children: [
                               Icon(
-                                _callLogs[index].isOutgoing? 
-                                 CupertinoIcons.phone_arrow_up_right
-                                  : CupertinoIcons.phone_arrow_down_left,
-                                color: _callLogs[index].isOutgoing? Colors.green : Colors.red,
+                                _callLogs[index].isOutgoing
+                                    ? CupertinoIcons.phone_arrow_up_right
+                                    : CupertinoIcons.phone_arrow_down_left,
+                                color: _callLogs[index].isOutgoing
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
-
-                              Text('${_callLogs[index].duration?.inSeconds} sec'),
+                              Text(
+                                  '${_callLogs[index].duration?.inSeconds} sec'),
                             ],
                           ),
                         ],
