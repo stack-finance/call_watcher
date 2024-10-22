@@ -14,14 +14,16 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
   Future<void> clearCallLogs() {
     return methodChannel.invokeMapMethod('clearCallLog');
   }
-  
+
   @override
   Future<List<CallLogEntry>?> getCallLogs() async {
-    final logs = (await methodChannel.invokeListMethod<Map>('getCallLog')) as List<Map>;
+    final logs =
+        (await methodChannel.invokeListMethod<Map>('getCallLog')) as List<Map>;
+
     /// cast the list of maps to a list of CallLogEntry objects
     return logs.map((log) => CallLogEntry.fromJson(log)).toList();
   }
-  
+
   @override
   Future<String?> getLastCalledNumber() {
     return methodChannel.invokeMethod<String>('getLastDialedNumber');

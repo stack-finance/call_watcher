@@ -1,11 +1,9 @@
-
 import 'package:call_watcher/models/call_log.dart';
 
 import 'call_watcher_platform_interface.dart';
 export 'models/call_log.dart';
 
 class CallWatcher {
-
   Future<String?> getLastCalledNumber() {
     return CallWatcherPlatform.instance.getLastCalledNumber();
   }

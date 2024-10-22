@@ -11,12 +11,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:call_watcher_example/main.dart';
 
 void main() {
-
   const dummyNumber = '1234567890';
 
   /// verify if app launches
   testWidgets('Verify app launches', (WidgetTester tester) async {
-
     await tester.pumpWidget(const MyApp());
 
     expect(find.byType(TextField), findsOneWidget);
@@ -36,7 +34,8 @@ void main() {
   });
 
   /// verify if app can get last called number
-  testWidgets('Verify app can get last called number', (WidgetTester tester) async {
+  testWidgets('Verify app can get last called number',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
     expect(find.text(dummyNumber), findsNothing);
