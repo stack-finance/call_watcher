@@ -1,0 +1,4 @@
+platform :ios, '13.0'
+pod 'SQLite.swift', '~> 0.12.2'
+
+workspace './Runner.xcworkspace'
