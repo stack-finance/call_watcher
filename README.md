@@ -2,6 +2,18 @@
 a flutter plugin to listen to call status, and mantain a call log, uses `CallKit` on iOS
 
 
+## Getting Started
+add this to your package's pubspec.yaml file
+```yaml
+dependencies:
+  call_watcher: ^0.0.1
+```
+## Usage  
+
+see the `./example/main.dart` for more details on how 
+
+
+
 ### Usage on iOS
 add these permissions to your `ios/Runner/Info.plist` in your app
 ```
@@ -24,7 +36,3 @@ add these permissions to your `AndroidManifest.xml` in your app
   <!-- If you want to clear call log (Optional)  -->
   <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 ```
-
-## TODO: 
-- [x] Add Android Support
-- [ ] Callback from native to flutter

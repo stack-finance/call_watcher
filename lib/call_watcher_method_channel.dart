@@ -33,4 +33,29 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
   Future<int?> initiateCall(String number) {
     return methodChannel.invokeMethod<int>('initiateCall', number);
   }
+
+
+  @override
+  Future<Iterable<CallLogEntry>?> query({
+    DateTime? dateFrom,
+    DateTime? dateTo,
+    int? durationFrom,
+    int? durationTo,
+    bool? isOutgoing,
+    String? number,
+  }) async {
+    final logs = (await methodChannel.invokeListMethod<Map>(
+      'query',
+      {
+        'dateFrom': dateFrom?.millisecondsSinceEpoch,
+        'dateTo': dateTo?.millisecondsSinceEpoch,
+        'durationFrom': durationFrom,
+        'durationTo': durationTo,
+        'isOutgoing': isOutgoing,
+        'number': number,
+      },
+    )) as List<Map>;
+
+    return logs.map((log) => CallLogEntry.fromJson(log)).toList();
+  }
 }

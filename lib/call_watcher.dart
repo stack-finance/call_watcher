@@ -12,6 +12,24 @@ class CallWatcher {
     return CallWatcherPlatform.instance.getCallLogs();
   }
 
+  Future<Iterable<CallLogEntry>?> query({
+    DateTime? dateFrom,
+    DateTime? dateTo,
+    int? durationFrom,
+    int? durationTo,
+    bool? isOutgoing,
+    String? number
+  }){
+    return CallWatcherPlatform.instance.query(
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      durationFrom: durationFrom,
+      durationTo: durationTo,
+      isOutgoing: isOutgoing,
+      number: number
+    );
+  }
+
   Future<void> clearCallLogs() {
     return CallWatcherPlatform.instance.clearCallLogs();
   }
@@ -20,3 +38,5 @@ class CallWatcher {
     return CallWatcherPlatform.instance.initiateCall(number);
   }
 }
+
+

@@ -19,7 +19,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
 
 SPEC CHECKSUMS:
-  call_watcher: 86e55376e796c27df186ca26c987e8cdb912537e
+  call_watcher: 859141025d8f456b047ffc6119ff8b4af39849e0
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
 

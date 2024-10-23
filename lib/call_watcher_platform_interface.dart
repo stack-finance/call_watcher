@@ -31,4 +31,12 @@ abstract class CallWatcherPlatform extends PlatformInterface {
   Future<void> clearCallLogs();
 
   Future<int?> initiateCall(String number);
+
+  Future<Iterable<CallLogEntry>?> query(
+      {DateTime? dateFrom,
+      DateTime? dateTo,
+      int? durationFrom,
+      int? durationTo,
+      bool? isOutgoing,
+      String? number});
 }

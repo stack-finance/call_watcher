@@ -4,7 +4,7 @@ import CallKit
 import Contacts
 import SwiftUI
 
-class CallManager: NSObject, ObservableObject {
+class CallLogManager: NSObject, ObservableObject {
     let callObserver = CXCallObserver()
     var calls: [UUID: CallStatus] = [:]
     var callLog: [CallLogEntry] = []
@@ -40,29 +40,30 @@ class CallManager: NSObject, ObservableObject {
         let duration = Date().timeIntervalSince(startTime)
         let logEntry = CallLogEntry(id: uuid,
                                     number: call.number,
-                                    contact: call.contact,
+                                    contactName: call.contact?.givenName,
                                     date: startTime,
                                     duration: duration,
                                     isOutgoing: call.isOutgoing)
         
         callLog.insert(logEntry, at: 0)
-        storage.saveCall(logEntry)
+        let _ = storage.save(logEntry)
+        
         
         calls.removeValue(forKey: uuid)
         callStartTimes.removeValue(forKey: uuid)
     }
     
     private func loadCallLog() {
-        callLog = storage.loadCalls()
+        callLog = storage.getAllCallLogs()
     }
 
-    func clearStorage() {
-        storage.clear()
+    func clearStorage() -> Bool {
         callLog = []
+        return storage.clear()
     }
 }
 
-extension CallManager: CXCallObserverDelegate {
+extension CallLogManager: CXCallObserverDelegate {
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasEnded {
             endCallAndLogEntry(uuid: call.uuid)
@@ -84,12 +85,12 @@ extension CallManager: CXCallObserverDelegate {
                 self.calls[call.uuid]?.currentStatus = status;
             } else {
                 /// find contact based on [number]
-                self.calls[call.uuid] =
-                            CallStatus(id: call.uuid,
-                                       number: number ?? "",
-                                       isOutgoing: call.isOutgoing,
-                                       currentStatus: status,
-                                       contact: nil) // We'll update the contact later if possible
+                self.calls[call.uuid] = CallStatus(
+                    id: call.uuid,
+                    number: number ?? "",
+                    isOutgoing: call.isOutgoing,
+                    currentStatus: status,
+                    contact: nil) // We'll update the contact later if possible
             }
            
         }
