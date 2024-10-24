@@ -31,4 +31,6 @@ abstract class CallWatcherPlatform extends PlatformInterface {
   Future<void> clearCallLogs();
 
   Future<int?> initiateCall(String number);
+
+  Future<int?> endCurrentCall();
 }

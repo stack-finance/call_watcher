@@ -33,4 +33,9 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
   Future<int?> initiateCall(String number) {
     return methodChannel.invokeMethod<int>('initiateCall', number);
   }
+
+  @override
+  Future<int?> endCurrentCall() {
+    return methodChannel.invokeMethod<int>('endCurrentCall');
+  }
 }

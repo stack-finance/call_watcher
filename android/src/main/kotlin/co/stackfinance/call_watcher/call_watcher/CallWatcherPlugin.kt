@@ -51,6 +51,26 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler {
                     result.error("CALL_FAILED", e.message, null)
                 }
             }
+            "endCurrentCall" -> {
+                try {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) 
+                        != PackageManager.PERMISSION_GRANTED) {
+                        result.error("PERMISSION_DENIED", "Call phone permission not granted", null)
+                        return
+                    }
+                    
+                    val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+                    val success = telecomManager.endCall()
+                    
+                    if (success) {
+                        result.success(0)  // Success
+                    } else {
+                        result.success(1)  // Failure
+                    }
+                } catch (e: Exception) {
+                    result.error("END_CALL_FAILED", e.message, null)
+                }
+            }
             "getLastDialedNumber" -> {
                 result.success(lastDialedNumber)
             }
