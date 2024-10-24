@@ -19,4 +19,8 @@ class CallWatcher {
   Future<int?> initiateCall(String number) {
     return CallWatcherPlatform.instance.initiateCall(number);
   }
+
+  Future<int?> endCurrentCall() {
+    return CallWatcherPlatform.instance.endCurrentCall();
+  }
 }
