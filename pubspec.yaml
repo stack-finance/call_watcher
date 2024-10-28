@@ -1,7 +1,7 @@
 name: call_watcher
 description: >- 
   a flutter plugin to listen to call state changes and maintain a call ledger.
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/stack-finance/call_watcher
 issue_tracker: https://github.com/stack-finance/call_watcher/issues
 
