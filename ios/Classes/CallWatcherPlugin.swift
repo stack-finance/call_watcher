@@ -30,6 +30,14 @@ public class CallWatcherPlugin: NSObject, FlutterPlugin {
       } 
     case "getCallLog":
       result(callManager.callLog.map { $0.toMap() })
+    
+    case "queryCallLogs":
+      if let filters = call.arguments as? [String: Any] {
+        let callLogEntries = callManager.queryCallLogs(filters: filters)
+        result(callLogEntries.map { $0.toMap() })
+      } else {
+        result(FlutterError(code: "INVALID_ARGUMENT", message: "Invalid argument", details: nil))
+      }
 
     case "clearCallLog":
       callManager.clearStorage()

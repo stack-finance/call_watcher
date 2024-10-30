@@ -33,4 +33,6 @@ abstract class CallWatcherPlatform extends PlatformInterface {
   Future<int?> initiateCall(String number);
 
   Future<int?> endCurrentCall();
+
+  Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query);
 }

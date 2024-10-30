@@ -37,6 +37,18 @@ void getLastCalledNumber() {
   });
 }
 
+final query = LogQuery(
+    name: 'John Doe',
+    number: '1234567890',
+    isOutgoing: true,
+    dateFrom: DateTime.now().subtract(Duration(days: 7)),
+    dateTo: DateTime.now(),
+    durationFrom: 0,
+    durationTo: 100,
+ );
+ 
+final logs = await CallWatcher.getQueryCallLogs(query);
+
 ```
 
 ## Platform Specifics
