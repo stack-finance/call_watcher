@@ -51,6 +51,63 @@ class CallManager: NSObject, ObservableObject {
         calls.removeValue(forKey: uuid)
         callStartTimes.removeValue(forKey: uuid)
     }
+
+    func queryCallLogs(filters: [String: Any]) -> [CallLogEntry] {
+        var callLogEntries: [CallLogEntry] = []
+        
+        var predicate = NSPredicate(value: true)
+        
+        // Handle date range
+        if let dateFrom = filters["dateFrom"] as? String,
+        let dateTo = filters["dateTo"] as? String {
+        let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            
+            if let fromDate = dateFormatter.date(from: dateFrom),
+                let toDate = dateFormatter.date(from: dateTo) {
+                predicate = NSPredicate(format: "date >= %@ AND date <= %@", fromDate as CVarArg, toDate as CVarArg)
+            }
+        }
+        
+        // Handle duration range
+        if let durationFrom = filters["durationFrom"] as? Int,
+        let durationTo = filters["durationTo"] as? Int {
+            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                predicate,
+                NSPredicate(format: "duration >= %d AND duration <= %d", durationFrom, durationTo)
+            ])
+        }
+        
+        // Handle name filter
+        if let name = filters["name"] as? String {
+            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                predicate,
+                NSPredicate(format: "contactName CONTAINS[c] %@", name)
+            ])
+        }
+        
+        // Handle number filter
+        if let number = filters["number"] as? String {
+            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                predicate,
+                NSPredicate(format: "number CONTAINS[c] %@", number)
+            ])
+        }
+        
+        // Handle call type (isOutgoing)
+        if let isOutgoing = filters["isOutgoing"] as? Bool {
+            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                predicate,
+                NSPredicate(format: "isOutgoing == %@", NSNumber(value: isOutgoing))
+            ])
+        }
+        
+        let filteredCallLog = callLog.filter { entry in
+            predicate.evaluate(with: entry)
+        }
+        
+        return filteredCallLog
+    }
     
     private func loadCallLog() {
         callLog = storage.loadCalls()

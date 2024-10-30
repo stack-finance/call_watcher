@@ -213,6 +213,26 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
                     }
                 }
             }
+
+            "queryCallLog" -> {
+                permissionManager.checkAndRequestCallLogReadPermission(activity, result) {
+                    try {
+                        @Suppress("UNCHECKED_CAST")
+                        val filters = call.arguments as? Map<String, Any?> 
+                            ?: return@checkAndRequestCallLogReadPermission result.error(
+                                "INVALID_ARGUMENT",
+                                "Filters must be provided as a map",
+                                null
+                            )
+                        
+                        val log = queryCallLogs(filters)
+                        result.success(log)
+                    } catch (e: Exception) {
+                        result.error("QUERY_LOG_FAILED", e.message, null)
+                    }
+                }            
+            }
+
             "clearCallLog" -> {
                 permissionManager.checkAndRequestCallLogWritePermission(activity, result) {
                     clearCallLog(result)
@@ -307,6 +327,114 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             result.error("CLEAR_LOG_FAILED", "Failed to clear call log: ${e.message}", null)
         }
     }
+
+    private fun queryCallLogs(filters: Map<String, Any?>): List<Map<String, Any?>> {
+        val callLogEntries = mutableListOf<Map<String, Any?>>()
+        
+        // Build the selection criteria and arguments
+        val selectionCriteria = mutableListOf<String>()
+        val selectionArgs = mutableListOf<String>()
+        
+        // Handle date range
+        filters["dateFrom"]?.let { dateFrom ->
+            selectionCriteria.add("${CallLog.Calls.DATE} >= ?")
+            // Convert ISO date string to milliseconds
+            val date = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
+                java.util.Locale.getDefault()).apply {
+                timeZone = java.util.TimeZone.getTimeZone("UTC")
+            }.parse(dateFrom as String)?.time.toString()
+            selectionArgs.add(date)
+        }
+        
+        filters["dateTo"]?.let { dateTo ->
+            selectionCriteria.add("${CallLog.Calls.DATE} <= ?")
+            val date = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
+                java.util.Locale.getDefault()).apply {
+                timeZone = java.util.TimeZone.getTimeZone("UTC")
+            }.parse(dateTo as String)?.time.toString()
+            selectionArgs.add(date)
+        }
+        
+        // Handle duration range
+        filters["durationFrom"]?.let { durationFrom ->
+            selectionCriteria.add("${CallLog.Calls.DURATION} >= ?")
+            selectionArgs.add((durationFrom as Number).toString())
+        }
+        
+        filters["durationTo"]?.let { durationTo ->
+            selectionCriteria.add("${CallLog.Calls.DURATION} <= ?")
+            selectionArgs.add((durationTo as Number).toString())
+        }
+        
+        // Handle name filter with LIKE query
+        filters["name"]?.let { name ->
+            selectionCriteria.add("${CallLog.Calls.CACHED_NAME} LIKE ?")
+            selectionArgs.add("%${name as String}%")
+        }
+        
+        // Handle number filter with LIKE query
+        filters["number"]?.let { number ->
+            selectionCriteria.add("${CallLog.Calls.NUMBER} LIKE ?")
+            selectionArgs.add("%${number as String}%")
+        }
+        
+        // Handle call type (isOutgoing)
+        filters["isOutgoing"]?.let { isOutgoing ->
+            selectionCriteria.add("${CallLog.Calls.TYPE} = ?")
+            selectionArgs.add(
+                if (isOutgoing as Boolean) 
+                    CallLog.Calls.OUTGOING_TYPE.toString() 
+                else 
+                    CallLog.Calls.INCOMING_TYPE.toString()
+            )
+        }
+        
+        // Combine all criteria
+        val selection = if (selectionCriteria.isEmpty()) null 
+            else selectionCriteria.joinToString(" AND ")
+        
+        val cursor = context.contentResolver.query(
+            CallLog.Calls.CONTENT_URI,
+            arrayOf(
+                CallLog.Calls._ID,
+                CallLog.Calls.NUMBER,
+                CallLog.Calls.CACHED_NAME,
+                CallLog.Calls.DATE,
+                CallLog.Calls.DURATION,
+                CallLog.Calls.TYPE
+            ),
+            selection,
+            if (selectionArgs.isEmpty()) null else selectionArgs.toTypedArray(),
+            "${CallLog.Calls.DATE} DESC"
+        )
+        
+        cursor?.use {
+            while (it.moveToNext()) {
+                val id = it.getString(0)
+                val number = it.getString(1)
+                val name = it.getString(2)
+                val date = it.getLong(3)
+                val duration = it.getLong(4)
+                val type = it.getInt(5)
+                
+                val isoDate = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
+                    java.util.Locale.getDefault()).apply {
+                    timeZone = java.util.TimeZone.getTimeZone("UTC")
+                }.format(java.util.Date(date))
+                
+                callLogEntries.add(mapOf(
+                    "id" to id,
+                    "number" to number,
+                    "contactName" to name,
+                    "date" to isoDate,
+                    "duration" to duration,
+                    "isOutgoing" to (type == CallLog.Calls.OUTGOING_TYPE)
+                ))
+            }
+        }
+        
+        return callLogEntries
+    }    
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity

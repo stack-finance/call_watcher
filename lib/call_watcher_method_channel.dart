@@ -38,4 +38,9 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
   Future<int?> endCurrentCall() {
     return methodChannel.invokeMethod<int>('endCurrentCall');
   }
+  
+  @override
+  Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query) {
+    return methodChannel.invokeMethod('getQueryCallLogs', query.toJson());
+  }
 }

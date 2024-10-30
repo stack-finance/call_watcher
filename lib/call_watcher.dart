@@ -1,9 +1,10 @@
 import 'dart:io';
 
 import 'package:call_watcher/models/call_log.dart';
+import 'package:call_watcher/models/log_query.dart';
 
 import 'call_watcher_platform_interface.dart';
-export 'models/call_log.dart';
+export 'models/models.dart';
 
 class CallWatcher {
   static Future<String?> getLastCalledNumber() {
@@ -20,6 +21,10 @@ class CallWatcher {
 
   static Future<int?> initiateCall(String number) {
     return CallWatcherPlatform.instance.initiateCall(number);
+  }
+
+  static Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query) {
+    return CallWatcherPlatform.instance.getQueryCallLogs(query);
   }
 
   static Future<int?> endCurrentCall() {
