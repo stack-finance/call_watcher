@@ -18,7 +18,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String _lastCalledNumber = 'Unknown';
-  final _callWatcherPlugin = CallWatcher();
   final List<CallLogEntry> _callLogs = [];
   final TextEditingController _numberController = TextEditingController();
 
@@ -58,7 +57,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _initateCall(String number) async {
     int? result;
     try {
-      result = await _callWatcherPlugin.initiateCall(number);
+      result = await CallWatcher.initiateCall(number);
     } catch (e) {
       print(e);
     }
@@ -74,7 +73,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _getLastCalledNumber() async {
     String? lastCalledNumber;
     try {
-      lastCalledNumber = await _callWatcherPlugin.getLastCalledNumber();
+      lastCalledNumber = await CallWatcher.getLastCalledNumber();
     } on PlatformException {
       lastCalledNumber = 'Failed to get last called number.';
     }
@@ -89,7 +88,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _getCallLogs() async {
     List<CallLogEntry>? callLogs;
     try {
-      callLogs = await _callWatcherPlugin.getCallLogs();
+      callLogs = await CallWatcher.getCallLogs();
     } on PlatformException {
       callLogs = [];
     }
@@ -162,7 +161,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       onPressed: _getLastCalledNumber,
                       child: const Text('Get Last Number'),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     ElevatedButton(
@@ -183,7 +182,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${_callLogs[index].number}'),
+                                Text(_callLogs[index].number),
                                 const SizedBox(width: 10),
                                 Text(
                                     'Date: ${_callLogs[index].date?.formatDate}'),

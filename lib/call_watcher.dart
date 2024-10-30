@@ -1,26 +1,32 @@
+import 'dart:io';
+
 import 'package:call_watcher/models/call_log.dart';
 
 import 'call_watcher_platform_interface.dart';
 export 'models/call_log.dart';
 
 class CallWatcher {
-  Future<String?> getLastCalledNumber() {
+  static Future<String?> getLastCalledNumber() {
     return CallWatcherPlatform.instance.getLastCalledNumber();
   }
 
-  Future<List<CallLogEntry>?> getCallLogs() {
+  static Future<List<CallLogEntry>?> getCallLogs() {
     return CallWatcherPlatform.instance.getCallLogs();
   }
 
-  Future<void> clearCallLogs() {
+  static Future<void> clearCallLogs() {
     return CallWatcherPlatform.instance.clearCallLogs();
   }
 
-  Future<int?> initiateCall(String number) {
+  static Future<int?> initiateCall(String number) {
     return CallWatcherPlatform.instance.initiateCall(number);
   }
 
-  Future<int?> endCurrentCall() {
+  static Future<int?> endCurrentCall() {
+    if (Platform.isIOS) {
+      // INFO: ios platform doesn't support this feature
+      return Future.value(null);
+    }
     return CallWatcherPlatform.instance.endCurrentCall();
   }
 }

@@ -17,14 +17,12 @@ void main() {
   const dummyNumber = '1234567890';
 
   testWidgets('initate call', (WidgetTester tester) async {
-    final CallWatcher plugin = CallWatcher();
-    await plugin.initiateCall(dummyNumber);
+    await CallWatcher.initiateCall(dummyNumber);
   });
 
   /// should save last called number to shared preferences
   testWidgets('get last called number', (WidgetTester tester) async {
-    final CallWatcher plugin = CallWatcher();
-    String? lastCalledNumber = await plugin.getLastCalledNumber();
+    String? lastCalledNumber = await CallWatcher.getLastCalledNumber();
 
     expect(lastCalledNumber, dummyNumber);
   });
