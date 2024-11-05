@@ -15,33 +15,31 @@ class LogQuery {
       required this.name,
       required this.number,
       required this.isOutgoing});
-  
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is LogQuery &&
-      other.dateFrom == dateFrom &&
-      other.dateTo == dateTo &&
-      other.durationFrom == durationFrom &&
-      other.durationTo == durationTo &&
-      other.name == name &&
-      other.number == number &&
-      other.isOutgoing == isOutgoing;
+        other.dateFrom == dateFrom &&
+        other.dateTo == dateTo &&
+        other.durationFrom == durationFrom &&
+        other.durationTo == durationTo &&
+        other.name == name &&
+        other.number == number &&
+        other.isOutgoing == isOutgoing;
   }
 
   @override
   int get hashCode {
     return dateFrom.hashCode ^
-      dateTo.hashCode ^
-      durationFrom.hashCode ^
-      durationTo.hashCode ^
-      name.hashCode ^
-      number.hashCode ^
-      isOutgoing.hashCode;
+        dateTo.hashCode ^
+        durationFrom.hashCode ^
+        durationTo.hashCode ^
+        name.hashCode ^
+        number.hashCode ^
+        isOutgoing.hashCode;
   }
-
 
   LogQuery copyWith({
     DateTime? dateFrom,

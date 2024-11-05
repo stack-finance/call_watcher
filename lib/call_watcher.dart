@@ -34,7 +34,7 @@ class CallWatcher {
   ///  durationFrom: 0,
   ///  durationTo: 100,
   /// );
-  /// 
+  ///
   /// final logs = await CallWatcher.getQueryCallLogs(query);
   /// ```
   static Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query) {
