@@ -1,3 +1,6 @@
+## 1.1.1
+- Fix last dailed number not in sync for android
+
 ## 1.1.0
 - Call logs query support
 
