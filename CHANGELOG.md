@@ -1,3 +1,6 @@
+## 1.1.0
+- Call logs query support
+
 ## 1.0.0
 - Breaking change: all methods are now static methods
 
