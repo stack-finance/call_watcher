@@ -316,6 +316,12 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             }
         }
 
+        // Update the last dailed outgoing number 
+        if (callLogEntries.isNotEmpty()) {
+            val lastOutgoingCall = callLogEntries.firstOrNull { it["isOutgoing"] == true }
+            lastDialedNumber = lastOutgoingCall?.get("number") as? String ?: lastDialedNumber
+        }
+
         return callLogEntries
     }
 
