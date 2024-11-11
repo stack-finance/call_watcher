@@ -6,15 +6,17 @@ class LogQuery {
   final String? name;
   final String? number;
   final bool? isOutgoing;
+  final int? limit;
 
-  const LogQuery(
-      {required this.dateFrom,
-      required this.dateTo,
-      required this.durationFrom,
-      required this.durationTo,
-      required this.name,
-      required this.number,
-      required this.isOutgoing});
+  const LogQuery({
+    this.dateFrom,
+    this.dateTo,
+    this.durationFrom,
+    this.durationTo,
+    this.name,
+    this.number,
+    this.limit,
+    this.isOutgoing});
 
   @override
   bool operator ==(Object other) {
@@ -27,6 +29,7 @@ class LogQuery {
         other.durationTo == durationTo &&
         other.name == name &&
         other.number == number &&
+        other.limit == limit && 
         other.isOutgoing == isOutgoing;
   }
 
@@ -38,6 +41,7 @@ class LogQuery {
         durationTo.hashCode ^
         name.hashCode ^
         number.hashCode ^
+        limit.hashCode ^
         isOutgoing.hashCode;
   }
 
@@ -48,6 +52,7 @@ class LogQuery {
     int? durationTo,
     String? name,
     String? number,
+    int? limit,
     bool? isOutgoing,
   }) {
     return LogQuery(
@@ -58,6 +63,7 @@ class LogQuery {
       name: name ?? this.name,
       number: number ?? this.number,
       isOutgoing: isOutgoing ?? this.isOutgoing,
+      limit: limit ?? this.limit
     );
   }
 
@@ -69,6 +75,7 @@ class LogQuery {
       'durationTo': durationTo,
       'name': name,
       'number': number,
+      'limit': limit,
       'isOutgoing': isOutgoing,
     };
   }

@@ -1,5 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="co.stackfinance.call_watcher.call_watcher">
+  <!-- Add these to your AndroidManifest.xml inside the <manifest> tag -->
   <uses-permission android:name="android.permission.CALL_PHONE" />
   <uses-permission android:name="android.permission.READ_CALL_LOG" />
+  <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+  <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+  <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- For mute control -->
+
+  <!-- Permission group for SDK >= 31 (Android 12+) -->
+  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- For speaker control with bluetooth -->
+
+  <!-- Feature declarations -->
+  <uses-feature android:name="android.hardware.telephony" android:required="true" />
+  <uses-feature android:name="android.hardware.microphone" android:required="true" />
 </manifest>

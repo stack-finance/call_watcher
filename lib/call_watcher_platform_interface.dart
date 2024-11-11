@@ -26,7 +26,7 @@ abstract class CallWatcherPlatform extends PlatformInterface {
 
   Future<String?> getLastCalledNumber();
 
-  Future<List<CallLogEntry>?> getCallLogs();
+  Future<List<CallLogEntry>?> getCallLogs({int limit = 100});
 
   Future<void> clearCallLogs();
 
@@ -35,4 +35,10 @@ abstract class CallWatcherPlatform extends PlatformInterface {
   Future<int?> endCurrentCall();
 
   Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query);
+
+  Future<int?> toggleHoldCall();
+
+  Future<int?> toggleMuteCall();
+
+  Future<int?> toggleSpeaker();
 }

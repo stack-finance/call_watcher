@@ -11,7 +11,7 @@ class CallWatcher {
     return CallWatcherPlatform.instance.getLastCalledNumber();
   }
 
-  static Future<List<CallLogEntry>?> getCallLogs() {
+  static Future<List<CallLogEntry>?> getCallLogs({int limit = 100}) {
     return CallWatcherPlatform.instance.getCallLogs();
   }
 
