@@ -1,3 +1,7 @@
+## 1.2.0
+- Add limit parameter to getCallLogs method
+- In call Controls support for android
+
 ## 1.1.1
 - Fix last dailed number not in sync for android
 
