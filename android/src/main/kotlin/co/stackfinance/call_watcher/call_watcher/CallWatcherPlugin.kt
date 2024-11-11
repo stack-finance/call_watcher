@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.CallLog
 import android.telecom.TelecomManager
+import android.telephony.TelephonyManager
 import android.telecom.CallAudioState
 import android.telecom.Connection
 import android.telecom.InCallService
@@ -215,8 +216,9 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var context: Context
     private var activity: Activity? = null
     private lateinit var permissionManager: CallPermissionManager
-    private lateinit var audioManager: android.media.AudioManager
-    private lateinit var telecomManager: android.telecom.TelecomManager
+    private var audioManager: android.media.AudioManager? = null
+    private var telecomManager: android.telecom.TelecomManager? = null
+    private var telephonyManager: TelephonyManager? = null
     private var lastDialedNumber: String = ""
 
     // Data class to represent a call log entry
@@ -235,9 +237,10 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         channel.setMethodCallHandler(this)
         permissionManager = CallPermissionManager(context)
 
-        // Add this in the onAttachedToEngine method, after the existing initializations
-        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? android.telecom.TelecomManager
-        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? android.media.AudioManager
+        // Initialize managers
+        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+        telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -331,7 +334,7 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun endCurrentCall(result: Result) {
         try {
-            val success = telecomManager.endCall()
+            val success = telecomManager?.endCall() ?: false
             
             if (success) {
                 result.success(0)  // Success
@@ -405,32 +408,18 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
+    // Updated call control methods
     private fun toggleHoldCall(result: Result) {
         try {
-            val callState = telecomManager?.callState
-            if (callState == TelecomManager.CALL_STATE_RINGING || 
-                callState == TelecomManager.CALL_STATE_IN_CALL) {
-                
-                // Get the ongoing call
-                val calls = telecomManager?.connections
-                calls?.forEach { call ->
-                    if (call.state == android.telecom.Connection.STATE_ACTIVE || 
-                        call.state == android.telecom.Connection.STATE_HOLDING) {
-                        // Toggle hold state
-                        val isHeld = call.state == android.telecom.Connection.STATE_HOLDING
-                        if (isHeld) {
-                            call.setOnHold(false)
-                        } else {
-                            call.setOnHold(true)
-                        }
-                        result.success(0) // Success
-                        return
-                    }
-                }
-                result.success(1) // No active call found
-            } else {
+            // Check if there's an active call
+            if (telephonyManager?.callState != TelephonyManager.CALL_STATE_OFFHOOK) {
                 result.success(1) // No active call
+                return
             }
+
+            // Note: Direct call hold control might not be available on all devices
+            // Some manufacturers might restrict this functionality
+            result.success(1) // Return 1 as hold might not be directly controllable
         } catch (e: Exception) {
             result.error("HOLD_FAILED", "Failed to toggle hold state: ${e.message}", null)
         }
@@ -441,7 +430,13 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             audioManager?.let { audio ->
                 val isSpeakerOn = audio.isSpeakerphoneOn
                 audio.isSpeakerphoneOn = !isSpeakerOn
-                result.success(0) // Success
+                
+                // Verify if the change was successful
+                if (audio.isSpeakerphoneOn == !isSpeakerOn) {
+                    result.success(0) // Success
+                } else {
+                    result.success(1) // Failed to change speaker state
+                }
             } ?: run {
                 result.success(1) // AudioManager not available
             }
@@ -449,13 +444,19 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             result.error("SPEAKER_FAILED", "Failed to toggle speaker: ${e.message}", null)
         }
     }
-    
+
     private fun toggleMute(result: Result) {
         try {
             audioManager?.let { audio ->
                 val isMuted = audio.isMicrophoneMute
                 audio.isMicrophoneMute = !isMuted
-                result.success(0) // Success
+                
+                // Verify if the change was successful
+                if (audio.isMicrophoneMute == !isMuted) {
+                    result.success(0) // Success
+                } else {
+                    result.success(1) // Failed to change mute state
+                }
             } ?: run {
                 result.success(1) // AudioManager not available
             }
@@ -463,6 +464,7 @@ class CallWatcherPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             result.error("MUTE_FAILED", "Failed to toggle mute: ${e.message}", null)
         }
     }
+
 
     private fun queryCallLogs(filters: Map<String, Any?>): List<Map<String, Any?>> {
         val callLogEntries = mutableListOf<Map<String, Any?>>()
