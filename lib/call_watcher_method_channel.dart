@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:call_watcher/call_watcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -16,9 +18,9 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
   }
 
   @override
-  Future<List<CallLogEntry>?> getCallLogs() async {
+  Future<List<CallLogEntry>?> getCallLogs({int limit = 100}) async {
     final logs =
-        (await methodChannel.invokeListMethod<Map>('getCallLog')) as List<Map>;
+        (await methodChannel.invokeListMethod<Map>('getCallLog', limit)) as List<Map>;
 
     /// cast the list of maps to a list of CallLogEntry objects
     return logs.map((log) => CallLogEntry.fromJson(log)).toList();
@@ -36,11 +38,39 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
 
   @override
   Future<int?> endCurrentCall() {
+    if (Platform.isIOS) {
+      // INFO: ios platform doesn't support this feature
+      return Future.value(null);
+    }
     return methodChannel.invokeMethod<int>('endCurrentCall');
   }
 
   @override
   Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query) {
     return methodChannel.invokeMethod('getQueryCallLogs', query.toJson());
+  }
+  
+  @override
+  Future<int?> toggleHoldCall() {
+    if (Platform.isIOS) {
+      // INFO: ios platform doesn't support this feature
+      return Future.value(null);
+    }
+    return methodChannel.invokeMethod<int>('toggleHoldCall');
+  }
+  
+  @override
+  Future<int?> toggleMuteCall() {
+    if (Platform.isIOS) {
+      // INFO: ios platform doesn't support this feature
+      return Future.value(null);
+    }
+    return methodChannel.invokeMethod<int>('toggleMuteCall');
+  }
+  
+  @override
+  Future<int?> toggleSpeaker() {
+    
+    return methodChannel.invokeMethod<int>('toggleSpeaker');
   }
 }

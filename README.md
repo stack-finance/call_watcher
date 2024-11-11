@@ -70,6 +70,15 @@ add these permissions to your `ios/Runner/Info.plist` in your app
 add these permissions to your `AndroidManifest.xml` in your app
 
 ```
+  <!-- Add this inside the <application> tag in AndroidManifest.xml -->
+  <service android:name=".CallControlService"
+      android:permission="android.permission.BIND_INCALL_SERVICE"
+      android:exported="true">
+      <intent-filter>
+          <action android:name="android.telecom.InCallService"/>
+      </intent-filter>
+  </service>
+  ...
   <uses-permission android:name="android.permission.CALL_PHONE" />
   <uses-permission android:name="android.permission.READ_CALL_LOG" />
   <!-- If you want to clear call log (Optional)  -->

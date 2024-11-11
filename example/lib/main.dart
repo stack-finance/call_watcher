@@ -88,7 +88,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _getCallLogs() async {
     List<CallLogEntry>? callLogs;
     try {
-      callLogs = await CallWatcher.getCallLogs();
+      callLogs = await CallWatcher.getCallLogs(limit: 10);
+      if(callLogs != null) {
+        print(callLogs.length);
+      }
     } on PlatformException {
       callLogs = [];
     }
