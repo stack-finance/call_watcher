@@ -19,8 +19,8 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
 
   @override
   Future<List<CallLogEntry>?> getCallLogs({int limit = 100}) async {
-    final logs =
-        (await methodChannel.invokeListMethod<Map>('getCallLog', limit)) as List<Map>;
+    final logs = (await methodChannel.invokeListMethod<Map>(
+        'getCallLog', limit)) as List<Map>;
 
     /// cast the list of maps to a list of CallLogEntry objects
     return logs.map((log) => CallLogEntry.fromJson(log)).toList();
@@ -49,7 +49,7 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
   Future<List<CallLogEntry>?> getQueryCallLogs(LogQuery query) {
     return methodChannel.invokeMethod('getQueryCallLogs', query.toJson());
   }
-  
+
   @override
   Future<int?> toggleHoldCall() {
     if (Platform.isIOS) {
@@ -58,7 +58,7 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
     }
     return methodChannel.invokeMethod<int>('toggleHoldCall');
   }
-  
+
   @override
   Future<int?> toggleMuteCall() {
     if (Platform.isIOS) {
@@ -67,10 +67,9 @@ class MethodChannelCallWatcher implements CallWatcherPlatform {
     }
     return methodChannel.invokeMethod<int>('toggleMuteCall');
   }
-  
+
   @override
   Future<int?> toggleSpeaker() {
-    
     return methodChannel.invokeMethod<int>('toggleSpeaker');
   }
 }

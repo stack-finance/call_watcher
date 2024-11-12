@@ -8,15 +8,15 @@ class LogQuery {
   final bool? isOutgoing;
   final int? limit;
 
-  const LogQuery({
-    this.dateFrom,
-    this.dateTo,
-    this.durationFrom,
-    this.durationTo,
-    this.name,
-    this.number,
-    this.limit,
-    this.isOutgoing});
+  const LogQuery(
+      {this.dateFrom,
+      this.dateTo,
+      this.durationFrom,
+      this.durationTo,
+      this.name,
+      this.number,
+      this.limit,
+      this.isOutgoing});
 
   @override
   bool operator ==(Object other) {
@@ -29,7 +29,7 @@ class LogQuery {
         other.durationTo == durationTo &&
         other.name == name &&
         other.number == number &&
-        other.limit == limit && 
+        other.limit == limit &&
         other.isOutgoing == isOutgoing;
   }
 
@@ -56,15 +56,14 @@ class LogQuery {
     bool? isOutgoing,
   }) {
     return LogQuery(
-      dateFrom: dateFrom ?? this.dateFrom,
-      dateTo: dateTo ?? this.dateTo,
-      durationFrom: durationFrom ?? this.durationFrom,
-      durationTo: durationTo ?? this.durationTo,
-      name: name ?? this.name,
-      number: number ?? this.number,
-      isOutgoing: isOutgoing ?? this.isOutgoing,
-      limit: limit ?? this.limit
-    );
+        dateFrom: dateFrom ?? this.dateFrom,
+        dateTo: dateTo ?? this.dateTo,
+        durationFrom: durationFrom ?? this.durationFrom,
+        durationTo: durationTo ?? this.durationTo,
+        name: name ?? this.name,
+        number: number ?? this.number,
+        isOutgoing: isOutgoing ?? this.isOutgoing,
+        limit: limit ?? this.limit);
   }
 
   Map<String, dynamic> toJson() {

@@ -89,7 +89,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     List<CallLogEntry>? callLogs;
     try {
       callLogs = await CallWatcher.getCallLogs(limit: 10);
-      if(callLogs != null) {
+      if (callLogs != null) {
         print(callLogs.length);
       }
     } on PlatformException {
