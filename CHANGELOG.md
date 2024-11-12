@@ -1,3 +1,6 @@
+## 1.2.1
+- Hot fix for android end call issue
+
 ## 1.2.0
 - Add limit parameter to getCallLogs method
 - In call Controls support for android
